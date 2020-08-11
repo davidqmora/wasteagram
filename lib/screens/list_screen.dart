@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/routes.dart';
 import 'package:wasteagram/screens/post_view_screen.dart';
+import 'package:wasteagram/services/PostDAO.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 import 'package:wasteagram/widgets/wait_spinner.dart';
 
@@ -15,7 +16,7 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  List<Post> _posts;
+  List<QuerySnapshot> _posts;
   Widget contents;
 
   @override
@@ -33,7 +34,7 @@ class _ListScreenState extends State<ListScreen> {
 
   Widget getListing() {
     return StreamBuilder(
-        stream: getAllPosts(),
+        stream: PostDAO().getPosts(),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.data.documents != null &&
@@ -51,17 +52,15 @@ class _ListScreenState extends State<ListScreen> {
         });
   }
 
-  Stream<QuerySnapshot> getAllPosts() =>
-      Firestore.instance.collection('posts').snapshots();
-
   ListView postsList(AsyncSnapshot snapshot) {
     return ListView.builder(
         itemCount: snapshot.data.documents.length,
         itemBuilder: (context, index) {
-          var post = snapshot.data.documents[index];
+          var post = Post.fromMap(snapshot.data.documents[index].data);
+//          debugPrint(post.getId());
           return ListTile(
-              title: Text(DateFormat.yMMMd().format(post["date"].toDate())),
-              trailing: Text('${post["count"]}'),
+              title: Text(DateFormat.yMMMd().format(post.date)),
+              trailing: Text('${post.count}'),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) =>
@@ -80,12 +79,8 @@ class _ListScreenState extends State<ListScreen> {
 
     if (image != null) {
       await Navigator.of(context).pushNamed(Routes.newPost, arguments: image);
-      var posts = await getAllPosts().toList();
-      debugPrint(posts.toString());
     }
 
-    setState(() {
-//      _posts = posts;
-    });
+    setState(() {});
   }
 }
