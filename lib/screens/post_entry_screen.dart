@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/services/PostDAO.dart';
 import 'package:wasteagram/widgets/chrome.dart';
@@ -16,7 +17,14 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   PickedFile _image;
-  var _post = Post();
+  LocationData _location;
+  Post _post = Post();
+
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +108,17 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _post.date = DateTime.now();
-      _post.location = '(long, lat)';
+      _post.longitude = _location.longitude;
+      _post.latitude = _location.latitude;
       _post.imageUrl = _image.path;
       PostDAO().savePost(_post);
       Navigator.of(context).pop();
     }
+  }
+
+  void getLocation() async {
+    var locationService = Location();
+    _location = await locationService.getLocation();
+    setState(() {});
   }
 }

@@ -1,7 +1,8 @@
 class Post {
   DateTime date;
   int count;
-  String location;
+  double longitude;
+  double latitude;
   String imageUrl;
 
   Post();
@@ -9,7 +10,8 @@ class Post {
   Post.fromMap(Map<String, dynamic> post) {
     date = post['date'].toDate();
     count = post['count'];
-    location = post['location'];
+    longitude = post['lon'];
+    latitude = post['lat'];
     imageUrl = post['image_url'];
   }
 
@@ -17,7 +19,8 @@ class Post {
     return {
       'date': date,
       'count': count,
-      'location': location,
+      'lon': longitude,
+      'lat': latitude,
       'image_url': imageUrl
     };
   }

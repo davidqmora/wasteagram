@@ -70,7 +70,7 @@ class PostView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
       child: Text(
-        _post.location,
+        'Lon: ${_post.longitude.toStringAsFixed(2)}, Lat: ${_post.latitude.toStringAsFixed(2)}',
         style: Theme.of(context).textTheme.headline6,
       ),
     );

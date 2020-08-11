@@ -36,9 +36,7 @@ class _ListScreenState extends State<ListScreen> {
     return StreamBuilder(
         stream: PostDAO().getPosts(),
         builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.data.documents != null &&
-              snapshot.data.documents.length > 0) {
+          if (snapshot.hasData && snapshot.data.documents != null) {
             return Chrome(
               title: 'Wasteagram - ${snapshot.data.documents.length}',
               body: postsList(snapshot),
