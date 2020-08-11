@@ -28,7 +28,7 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              itemsImage(),
+              itemsImage(constraints),
               itemCountPrompt(context),
               Spacer(),
               sendButton(context),
@@ -39,9 +39,10 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
     );
   }
 
-  Widget itemsImage() {
+  Widget itemsImage(BoxConstraints constraints) {
+    var imageHeight = constraints.maxHeight / 3;
     return Container(
-      height: 300,
+      height: imageHeight,
       width: double.infinity,
       child: Image.file(
         File(_image.path),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 import 'package:wasteagram/widgets/post_view.dart';
 
 class PostViewScreen extends StatelessWidget {
-  final dynamic _post;
+  final Post _post;
 
   PostViewScreen(this._post);
 

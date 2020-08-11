@@ -57,14 +57,12 @@ class _ListScreenState extends State<ListScreen> {
         itemCount: snapshot.data.documents.length,
         itemBuilder: (context, index) {
           var post = Post.fromMap(snapshot.data.documents[index].data);
-//          debugPrint(post.getId());
           return ListTile(
               title: Text(DateFormat.yMMMd().format(post.date)),
               trailing: Text('${post.count}'),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      PostViewScreen(snapshot.data.documents[index]),
+                  builder: (context) => PostViewScreen(post),
                 ));
               });
         });
