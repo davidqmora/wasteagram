@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,20 +15,9 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  List<QuerySnapshot> _posts;
-  Widget contents;
-
   @override
   Widget build(BuildContext context) {
     return getListing();
-  }
-
-  FloatingActionButton addEntryButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => savePost(context),
-      tooltip: 'Add new post',
-      child: Icon(Icons.camera_alt),
-    );
   }
 
   Widget getListing() {
@@ -37,9 +25,12 @@ class _ListScreenState extends State<ListScreen> {
         stream: PostDAO().getPosts(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data.documents != null) {
+            var posts = parsePosts(snapshot);
+            int itemCount = 0;
+            posts.forEach((p) => {itemCount += p.count});
             return Chrome(
-              title: 'Wasteagram - ${snapshot.data.documents.length}',
-              body: postsList(snapshot),
+              title: 'Wasteagram - $itemCount',
+              body: postsList(posts),
               actionButton: addEntryButton(context),
             );
           } else {
@@ -50,11 +41,11 @@ class _ListScreenState extends State<ListScreen> {
         });
   }
 
-  ListView postsList(AsyncSnapshot snapshot) {
+  ListView postsList(List<Post> posts) {
     return ListView.builder(
-        itemCount: snapshot.data.documents.length,
+        itemCount: posts.length,
         itemBuilder: (context, index) {
-          var post = Post.fromMap(snapshot.data.documents[index].data);
+          var post = posts[index];
           return ListTile(
               title: Text(DateFormat.yMMMd().format(post.date)),
               trailing: Text('${post.count}'),
@@ -64,6 +55,14 @@ class _ListScreenState extends State<ListScreen> {
                 ));
               });
         });
+  }
+
+  FloatingActionButton addEntryButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => savePost(context),
+      tooltip: 'Add new post',
+      child: Icon(Icons.camera_alt),
+    );
   }
 
   Future<void> savePost(context) async {
@@ -78,5 +77,13 @@ class _ListScreenState extends State<ListScreen> {
     }
 
     setState(() {});
+  }
+
+  List<Post> parsePosts(AsyncSnapshot<dynamic> snapshot) {
+    var posts = List<Post>();
+    for (dynamic rawPost in snapshot.data.documents) {
+      posts.add(Post.fromMap(rawPost.data));
+    }
+    return posts;
   }
 }

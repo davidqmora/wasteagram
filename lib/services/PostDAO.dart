@@ -18,7 +18,10 @@ class PostDAO {
   }
 
   Stream<QuerySnapshot> getPosts() {
-    return Firestore.instance.collection('posts').snapshots();
+    return Firestore.instance
+        .collection('posts')
+        .orderBy('date', descending: true)
+        .snapshots();
   }
 
   void savePost(Post post) async {
