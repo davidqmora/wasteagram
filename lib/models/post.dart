@@ -4,6 +4,8 @@ class Post {
   String location;
   String imageUrl;
 
+  Post();
+
   Post.fromMap(Map<String, dynamic> post) {
     date = post['date'].toDate();
     count = post['count'];

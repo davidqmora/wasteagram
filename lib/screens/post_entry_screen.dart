@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wasteagram/models/post.dart';
+import 'package:wasteagram/services/PostDAO.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 
 class PostEntryScreen extends StatefulWidget {
@@ -15,9 +16,7 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   PickedFile _image;
-  int _items;
-  bool _formChanged = false;
-  Post _post;
+  var _post = Post();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.headline5,
         autofocus: true,
-        onSaved: (String value) => _items = int.parse(value),
+        onSaved: (String value) => _post.count = int.parse(value),
         validator: (String value) {
           int count = int.parse(value);
           if (count <= 0) {
@@ -89,8 +88,21 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
           color: Theme.of(context).canvasColor,
         ),
         color: Theme.of(context).primaryColor,
-        onPressed: () {},
+        onPressed: () {
+          savePost(context);
+        },
       ),
     );
+  }
+
+  void savePost(context) {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      _post.date = DateTime.now();
+      _post.location = '(long, lat)';
+      _post.imageUrl = _image.path;
+      PostDAO().savePost(_post);
+      Navigator.of(context).pop();
+    }
   }
 }
