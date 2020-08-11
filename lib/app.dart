@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wasteagram/screens/list_screen.dart';
 import 'package:wasteagram/routes.dart';
+import 'package:wasteagram/screens/post_entry_screen.dart';
 
 class App extends StatelessWidget {
   static final routes = {
     Routes.home: (context) => ListScreen(),
-    Routes.newPost: (context) => Placeholder(),
+    Routes.newPost: (context) => PostEntryScreen(),
   };
 
 
@@ -17,7 +18,7 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ListScreen(),
+      routes: routes,
     );
   }
 }

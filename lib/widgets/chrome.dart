@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Chrome extends StatelessWidget {
   final Widget body;
   final Widget actionButton;
@@ -15,9 +14,9 @@ class Chrome extends StatelessWidget {
       body: this.body,
       floatingActionButton: this.actionButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      resizeToAvoidBottomInset: false,
     );
   }
-
 
   AppBar journalAppBar(title) {
     return AppBar(
@@ -36,6 +35,4 @@ class Chrome extends StatelessWidget {
       ],
     );
   }
-
 }
-
