@@ -25,6 +25,7 @@ class _ListScreenState extends State<ListScreen> {
     return StreamBuilder(
         stream: PostDAO().getPosts(),
         builder: (context, snapshot) {
+//          throw ("Sample crash");
           if (snapshot.hasData && snapshot.data.documents != null) {
             var posts = parsePosts(snapshot);
             int itemCount = 0;
