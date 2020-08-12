@@ -70,7 +70,9 @@ class _ListScreenState extends State<ListScreen> {
     PickedFile image;
     try {
       image = await picker.getImage(source: ImageSource.camera);
-    } on PlatformException catch (e) {}
+    } on PlatformException {
+      image = await picker.getImage(source: ImageSource.gallery);
+    }
 
     if (image != null) {
       await Navigator.of(context).pushNamed(Routes.newPost, arguments: image);

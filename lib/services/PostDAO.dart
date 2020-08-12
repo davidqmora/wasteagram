@@ -25,12 +25,12 @@ class PostDAO {
   }
 
   void savePost(Post post) async {
-    post.imageUrl = await saveImage(post.imageUrl);
+    post.imageUrl = await _saveImage(post.imageUrl);
 
     await Firestore.instance.collection('posts').add(post.toMap());
   }
 
-  Future saveImage(String imagePath) async {
+  Future _saveImage(String imagePath) async {
     var timeStamp = DateTime.now().millisecondsSinceEpoch;
     var storage =
         FirebaseStorage.instance.ref().child(imagePath + timeStamp.toString());
