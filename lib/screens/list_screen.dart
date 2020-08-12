@@ -29,6 +29,7 @@ class _ListScreenState extends State<ListScreen> {
             int itemCount = 0;
             posts.forEach((p) => {itemCount += p.count});
             return Chrome(
+              semanticTitle: "Wasteagram, total items wasted $itemCount",
               title: 'Wasteagram - $itemCount',
               body: postsList(posts),
               actionButton: addEntryButton(context),
@@ -41,27 +42,57 @@ class _ListScreenState extends State<ListScreen> {
         });
   }
 
-  ListView postsList(List<Post> posts) {
-    return ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-          var post = posts[index];
-          return ListTile(
-              title: Text(DateFormat.yMMMd().format(post.date)),
-              trailing: Text('${post.count}'),
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => PostViewScreen(post),
-                ));
-              });
-        });
+  Widget postsList(List<Post> posts) {
+    return Semantics(
+      value: 'List of wasted item posts.',
+      label: 'There are ${posts.length} posts.',
+      child: ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            var post = posts[index];
+            return postTile(context, post);
+          }),
+    );
   }
 
-  FloatingActionButton addEntryButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => savePost(context),
-      tooltip: 'Add new post',
-      child: Icon(Icons.camera_alt),
+  Widget postTile(BuildContext context, Post post) {
+    return MergeSemantics(
+      child: Semantics(
+        onTapHint: "get more details",
+        child: ListTile(
+            title: postTitle(post),
+            trailing: postItemCount(post),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => PostViewScreen(post),
+              ));
+            }),
+      ),
+    );
+  }
+
+  Widget postItemCount(Post post) => Semantics(
+        label: 'Wasted Items',
+        child: Text('${post.count}'),
+      );
+
+  Widget postTitle(Post post) => Semantics(
+        label: "Date",
+        child: Text(DateFormat.yMMMd().format(post.date)),
+      );
+
+  Widget addEntryButton(BuildContext context) {
+    return Semantics(
+      enabled: true,
+      label: "Add new post button.",
+      hint: "Double tap to add a new post.",
+      child: ExcludeSemantics(
+        child: FloatingActionButton(
+          onPressed: () => savePost(context),
+          tooltip: 'Add new post',
+          child: Icon(Icons.camera_alt),
+        ),
+      ),
     );
   }
 

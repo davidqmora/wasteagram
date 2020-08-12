@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wasteagram/screens/list_screen.dart';
 import 'package:wasteagram/routes.dart';
+import 'package:wasteagram/screens/list_screen.dart';
 import 'package:wasteagram/screens/post_entry_screen.dart';
 
 class App extends StatelessWidget {
@@ -8,7 +8,6 @@ class App extends StatelessWidget {
     Routes.home: (context) => ListScreen(),
     Routes.newPost: (context) => PostEntryScreen(),
   };
-
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +18,7 @@ class App extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       routes: routes,
+//      showSemanticsDebugger: true,
     );
   }
 }

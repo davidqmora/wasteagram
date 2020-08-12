@@ -27,22 +27,30 @@ class PostView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 4, left: 4, right: 4),
       alignment: Alignment.center,
-      child: Text(
-        DateFormat.yMMMd().format(_post.date),
-        style: Theme.of(context).textTheme.headline4,
+      child: Semantics(
+        label: 'Post date',
+        child: Text(
+          DateFormat.yMMMd().format(_post.date),
+          style: Theme.of(context).textTheme.headline4,
+        ),
       ),
     );
   }
 
   Widget photo(BuildContext context, BoxConstraints constraints) {
     var imageHeight = constraints.maxHeight / 3 * 2;
-    return Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.symmetric(vertical: 10),
-      height: imageHeight,
-      child: Image.network(
-        _post.imageUrl,
-        fit: BoxFit.fitWidth,
+    return Semantics(
+      label: 'Image showing the wasted items.',
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.symmetric(vertical: 10),
+        height: imageHeight,
+        child: ExcludeSemantics(
+          child: Image.network(
+            _post.imageUrl,
+            fit: BoxFit.fitWidth,
+          ),
+        ),
       ),
     );
   }
@@ -57,9 +65,12 @@ class PostView extends StatelessWidget {
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
-      child: Text(
-        "${_post.count.toString()} $postfix",
-        style: Theme.of(context).textTheme.headline6,
+      child: Semantics(
+        hint: "wasted",
+        child: Text(
+          "${_post.count.toString()} $postfix",
+          style: Theme.of(context).textTheme.headline6,
+        ),
       ),
     );
   }
@@ -70,8 +81,8 @@ class PostView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
       child: Text(
-        'Lon: ${_post.longitude.toStringAsFixed(2)}, Lat: ${_post.latitude.toStringAsFixed(2)}',
-        style: Theme.of(context).textTheme.headline6,
+        'Location: Longitude=${_post.longitude.toStringAsFixed(2)}, Latitude=${_post.latitude.toStringAsFixed(2)}',
+        style: Theme.of(context).textTheme.bodyText1,
       ),
     );
   }

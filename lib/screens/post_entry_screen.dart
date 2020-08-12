@@ -49,57 +49,82 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
 
   Widget itemsImage(BoxConstraints constraints) {
     var imageHeight = constraints.maxHeight / 3;
-    return Container(
-      height: imageHeight,
-      width: double.infinity,
-      child: Image.file(
-        File(_image.path),
-        fit: BoxFit.fill,
+    return Semantics(
+      label: 'Image showing the wasted items.',
+      child: Container(
+        height: imageHeight,
+        width: double.infinity,
+        child: ExcludeSemantics(
+          child: Image.file(
+            File(_image.path),
+            fit: BoxFit.fill,
+          ),
+        ),
       ),
     );
   }
 
-  Container itemCountPrompt(BuildContext context) {
+  Widget itemCountPrompt(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       margin: EdgeInsets.all(40),
       padding: EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: UnderlineInputBorder(),
-          hintText: "Number of Wasted items",
+      child: Semantics(
+        focused: true,
+        focusable: true,
+        label: "Wasted Items edit box.",
+        value: "",
+        hint: "Enter the number of wasted items. Must be higher than zero.",
+        child: ExcludeSemantics(
+          child: TextFormField(
+            decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              hintText: "Number of Wasted items",
+            ),
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline5,
+            autofocus: true,
+            onSaved: (String value) => _post.count = int.parse(value),
+            validator: (String value) {
+              int count = int.tryParse(value);
+              if (count == null || count <= 0) {
+                return "Wasted items must be a number higher than zero.";
+              } else {
+                return null;
+              }
+            },
+          ),
         ),
-        keyboardType: TextInputType.number,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline5,
-        autofocus: true,
-        onSaved: (String value) => _post.count = int.parse(value),
-        validator: (String value) {
-          int count = int.parse(value);
-          if (count <= 0) {
-            return "A number greater than zero must be provided.";
-          } else {
-            return null;
-          }
-        },
       ),
     );
   }
 
-  sendButton(context) {
-    return SizedBox(
+  Widget sendButton(context) {
+    return Container(
       height: 100,
       width: double.infinity,
-      child: RaisedButton(
-        child: Icon(
-          Icons.cloud_upload,
-          size: 100,
-          color: Theme.of(context).canvasColor,
-        ),
-        color: Theme.of(context).primaryColor,
-        onPressed: () {
+      child: Semantics(
+        button: true,
+        enabled: true,
+        label: "Save post",
+        onTapHint: "save new post",
+        onTap: () {
           savePost(context);
         },
+        child: ExcludeSemantics(
+          child: RaisedButton(
+            child: Icon(
+              Icons.cloud_upload,
+              size: 100,
+              color: Theme.of(context).canvasColor,
+            ),
+            onPressed: () {
+              savePost(context);
+            },
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
       ),
     );
   }
@@ -113,6 +138,13 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
       _post.imageUrl = _image.path;
       PostDAO().savePost(_post);
       Navigator.of(context).pop();
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'Please enter a value of 1 or more for wasted items.',
+          textAlign: TextAlign.center,
+        ),
+      ));
     }
   }
 
