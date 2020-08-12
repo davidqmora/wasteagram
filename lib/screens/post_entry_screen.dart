@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/services/PostDAO.dart';
+import 'package:wasteagram/services/analytics.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 
 class PostEntryScreen extends StatefulWidget {
@@ -137,6 +138,7 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
       _post.latitude = _location.latitude;
       _post.imageUrl = _image.path;
       PostDAO().savePost(_post);
+      Analytics().saveEvent('New post', _post.toMap());
       Navigator.of(context).pop();
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(

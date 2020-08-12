@@ -6,6 +6,7 @@ import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/routes.dart';
 import 'package:wasteagram/screens/post_view_screen.dart';
 import 'package:wasteagram/services/PostDAO.dart';
+import 'package:wasteagram/services/analytics.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 import 'package:wasteagram/widgets/wait_spinner.dart';
 
@@ -118,5 +119,11 @@ class _ListScreenState extends State<ListScreen> {
       posts.add(Post.fromMap(rawPost.data));
     }
     return posts;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Analytics().setScreenName("Home");
   }
 }
