@@ -32,6 +32,7 @@ class PostView extends StatelessWidget {
         child: Text(
           DateFormat.yMMMd().format(_post.date),
           style: Theme.of(context).textTheme.headline4,
+          key: ValueKey('date'),
         ),
       ),
     );
@@ -70,6 +71,7 @@ class PostView extends StatelessWidget {
         child: Text(
           "${_post.count.toString()} $postfix",
           style: Theme.of(context).textTheme.headline6,
+          key: ValueKey('item_count'),
         ),
       ),
     );

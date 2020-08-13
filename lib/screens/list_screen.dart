@@ -6,7 +6,6 @@ import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/routes.dart';
 import 'package:wasteagram/screens/post_view_screen.dart';
 import 'package:wasteagram/services/PostDAO.dart';
-import 'package:wasteagram/services/analytics.dart';
 import 'package:wasteagram/widgets/chrome.dart';
 import 'package:wasteagram/widgets/wait_spinner.dart';
 
@@ -52,16 +51,17 @@ class _ListScreenState extends State<ListScreen> {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             var post = posts[index];
-            return postTile(context, post);
+            return postTile(context, post, index);
           }),
     );
   }
 
-  Widget postTile(BuildContext context, Post post) {
+  Widget postTile(BuildContext context, Post post, index) {
     return MergeSemantics(
       child: Semantics(
         onTapHint: "get more details",
         child: ListTile(
+            key: ValueKey('post_$index'),
             title: postTitle(post),
             trailing: postItemCount(post),
             onTap: () {
@@ -73,15 +73,20 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  Widget postItemCount(Post post) => Semantics(
-        label: 'Wasted Items',
-        child: Text('${post.count}'),
-      );
-
   Widget postTitle(Post post) => Semantics(
         label: "Date",
-        child: Text(DateFormat.yMMMd().format(post.date)),
+        child: Text(
+          DateFormat.yMMMd().format(post.date),
+          key: ValueKey('date'),
+        ),
       );
+
+  Widget postItemCount(Post post) => Semantics(
+      label: 'Wasted Items',
+      child: Text(
+        '${post.count}',
+        key: ValueKey('item_count'),
+      ));
 
   Widget addEntryButton(BuildContext context) {
     return Semantics(
@@ -120,11 +125,5 @@ class _ListScreenState extends State<ListScreen> {
       posts.add(Post.fromMap(rawPost.data));
     }
     return posts;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Analytics().setScreenName("Home");
   }
 }
