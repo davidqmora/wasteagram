@@ -63,7 +63,7 @@ class _ListScreenState extends State<ListScreen> {
         child: ListTile(
             key: ValueKey('post_$index'),
             title: postTitle(post),
-            trailing: postItemCount(post),
+            trailing: postItemCount(context, post),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PostViewScreen(post),
@@ -81,12 +81,20 @@ class _ListScreenState extends State<ListScreen> {
         ),
       );
 
-  Widget postItemCount(Post post) => Semantics(
-      label: 'Wasted Items',
-      child: Text(
-        '${post.count}',
-        key: ValueKey('item_count'),
-      ));
+  Widget postItemCount(BuildContext context, Post post) => Container(
+        width: 35,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Theme.of(context).accentColor.withOpacity(0.5),
+        ),
+        child: Semantics(
+            label: 'Wasted Items',
+            child: Text(
+              '${post.count}',
+              key: ValueKey('item_count'),
+            )),
+        alignment: Alignment.center,
+      );
 
   Widget addEntryButton(BuildContext context) {
     return Semantics(
