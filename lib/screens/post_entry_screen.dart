@@ -61,8 +61,8 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _post.date = DateTime.now();
-      _post.longitude = _location.longitude;
-      _post.latitude = _location.latitude;
+      _post.longitude = _location?.longitude;
+      _post.latitude = _location?.latitude;
       _post.imageUrl = _image.path;
       PostDAO().savePost(_post);
       Analytics().saveEvent('New post', _post.toMap());
@@ -79,7 +79,13 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
 
   void getLocation() async {
     var locationService = Location();
-    _location = await locationService.getLocation();
+    var isEnabled = await locationService.serviceEnabled();
+    var permissionStatus = await locationService.hasPermission();
+
+    if (isEnabled && permissionStatus == PermissionStatus.granted) {
+      _location = await locationService.getLocation();
+    }
+
     setState(() {});
   }
 }

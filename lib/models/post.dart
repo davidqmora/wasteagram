@@ -19,8 +19,8 @@ class Post {
     return {
       'date': date,
       'count': count,
-      'lon': longitude,
-      'lat': latitude,
+      'lon': longitude ?? 0,
+      'lat': latitude ?? 0,
       'image_url': imageUrl
     };
   }
