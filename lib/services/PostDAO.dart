@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wasteagram/models/post.dart';
 
 class PostDAO {
@@ -31,9 +32,7 @@ class PostDAO {
   }
 
   Future _saveImage(String imagePath) async {
-    var timeStamp = DateTime.now().millisecondsSinceEpoch;
-    var storage =
-        FirebaseStorage.instance.ref().child(imagePath + timeStamp.toString());
+    var storage = FirebaseStorage.instance.ref().child(Uuid().v4());
     var uploadTask = storage.putFile(File(imagePath));
     await uploadTask.onComplete;
 
