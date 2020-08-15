@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +6,9 @@ import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/services/PostDAO.dart';
 import 'package:wasteagram/services/analytics.dart';
 import 'package:wasteagram/widgets/chrome.dart';
+import 'package:wasteagram/widgets/post_entry/new_post_image.dart';
+import 'package:wasteagram/widgets/post_entry/new_post_item_count.dart';
+import 'package:wasteagram/widgets/post_entry/new_post_save_button.dart';
 
 class PostEntryScreen extends StatefulWidget {
   @override
@@ -38,9 +39,12 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               itemsImage(constraints),
-              itemCountPrompt(context),
+              NewPostItemCount(
+                  onSaved: (String value) => _post.count = int.parse(value)),
               Spacer(),
-              sendButton(context),
+              NewPostSaveButton(
+                onPressed: savePost,
+              ),
             ],
           );
         }),
@@ -50,84 +54,7 @@ class _PostEntryScreenState extends State<PostEntryScreen> {
 
   Widget itemsImage(BoxConstraints constraints) {
     var imageHeight = constraints.maxHeight / 3;
-    return Semantics(
-      label: 'Image showing the wasted items.',
-      child: Container(
-        height: imageHeight,
-        width: double.infinity,
-        child: ExcludeSemantics(
-          child: Image.file(
-            File(_image.path),
-            fit: BoxFit.fill,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget itemCountPrompt(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      margin: EdgeInsets.all(40),
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Semantics(
-        focused: true,
-        focusable: true,
-        label: "Wasted Items edit box.",
-        value: "",
-        hint: "Enter the number of wasted items. Must be higher than zero.",
-        child: ExcludeSemantics(
-          child: TextFormField(
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              hintText: "Number of Wasted items",
-            ),
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline5,
-            autofocus: true,
-            onSaved: (String value) => _post.count = int.parse(value),
-            validator: (String value) {
-              int count = int.tryParse(value);
-              if (count == null || count <= 0) {
-                return "Wasted items must be a number higher than zero.";
-              } else {
-                return null;
-              }
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget sendButton(context) {
-    return Container(
-      height: 100,
-      width: double.infinity,
-      child: Semantics(
-        button: true,
-        enabled: true,
-        label: "Save post",
-        onTapHint: "save new post",
-        onTap: () {
-          savePost(context);
-        },
-        child: ExcludeSemantics(
-          child: RaisedButton(
-            child: Icon(
-              Icons.cloud_upload,
-              size: 100,
-              color: Theme.of(context).canvasColor,
-            ),
-            onPressed: () {
-              savePost(context);
-            },
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-      ),
-    );
+    return NewPostImage(image: _image, imageHeight: imageHeight);
   }
 
   void savePost(context) {

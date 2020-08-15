@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:wasteagram/models/post.dart';
 import 'package:wasteagram/routes.dart';
-import 'package:wasteagram/screens/post_view_screen.dart';
 import 'package:wasteagram/services/PostDAO.dart';
 import 'package:wasteagram/widgets/chrome.dart';
+import 'package:wasteagram/widgets/post_list/posts_list.dart';
 import 'package:wasteagram/widgets/wait_spinner.dart';
 
 class ListScreen extends StatefulWidget {
@@ -25,76 +24,31 @@ class _ListScreenState extends State<ListScreen> {
         stream: PostDAO().getPosts(),
         builder: (context, snapshot) {
 //          throw ("Sample crash");
+          List<Post> posts;
+          int itemCount = 0;
           if (snapshot.hasData && snapshot.data.documents != null) {
-            var posts = parsePosts(snapshot);
-            int itemCount = 0;
+            posts = parsePosts(snapshot);
             posts.forEach((p) => {itemCount += p.count});
-            return Chrome(
-              semanticTitle: "Wasteagram, total items wasted $itemCount",
-              title: 'Wasteagram - $itemCount',
-              body: postsList(posts),
-              actionButton: addEntryButton(context),
-            );
-          } else {
-            return Chrome(
-              body: WaitSpinner(),
-            );
           }
+          return Chrome(
+            semanticTitle: getSemanticTitle(itemCount),
+            title: getTitle(itemCount),
+            body: screeMainWidget(posts),
+            actionButton: addEntryButton(context),
+          );
         });
   }
 
-  Widget postsList(List<Post> posts) {
-    return Semantics(
-      value: 'List of wasted item posts.',
-      label: 'There are ${posts.length} posts.',
-      child: ListView.builder(
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            var post = posts[index];
-            return postTile(context, post, index);
-          }),
-    );
-  }
+  String getTitle(int itemCount) =>
+      itemCount == 0 ? 'Wasteagram' : 'Wasteagram - $itemCount';
 
-  Widget postTile(BuildContext context, Post post, index) {
-    return MergeSemantics(
-      child: Semantics(
-        onTapHint: "get more details",
-        child: ListTile(
-            key: ValueKey('post_$index'),
-            title: postTitle(post),
-            trailing: postItemCount(context, post),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => PostViewScreen(post),
-              ));
-            }),
-      ),
-    );
-  }
+  String getSemanticTitle(int itemCount) => itemCount == 0
+      ? 'Wasteagram'
+      : 'Wasteagram, total items wasted $itemCount';
 
-  Widget postTitle(Post post) => Semantics(
-        label: "Date",
-        child: Text(
-          DateFormat.yMMMd().format(post.date),
-          key: ValueKey('date'),
-        ),
-      );
-
-  Widget postItemCount(BuildContext context, Post post) => Container(
-        width: 35,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Theme.of(context).accentColor.withOpacity(0.5),
-        ),
-        child: Semantics(
-            label: 'Wasted Items',
-            child: Text(
-              '${post.count}',
-              key: ValueKey('item_count'),
-            )),
-        alignment: Alignment.center,
-      );
+  Widget screeMainWidget(List<Post> posts) => posts == null || posts.length == 0
+      ? WaitSpinner()
+      : PostsList(posts: posts);
 
   Widget addEntryButton(BuildContext context) {
     return Semantics(
